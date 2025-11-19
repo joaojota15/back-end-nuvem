@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # --- 1. O SERVIÇO DA API ---
+  api:
+    # Constrói a imagem usando o Dockerfile no diretório atual ('.')
+    build: .
+    container_name: gameconnect_api
+    ports:
+      # Mapeia a porta 8000 da sua máquina para a porta 8000 do container
+      - "8000:8000"
+    
+    # Lê seu arquivo .env local e passa as chaves para o container
+    env_file:
+      - .env
+    
+    environment:
+      # IMPORTANTE: Isto SOBRESCREVE a DATABASE_URL do seu .env
+      # Dentro do Docker, a API deve se conectar ao 'db' (nome do serviço)
+      # e não ao 'localhost'.
+      - DATABASE_URL=postgresql://postgres:12345@db:5432/gameconnect
+    
+    # Garante que o serviço 'db' esteja pronto antes de iniciar a 'api'
+    depends_on:
+      - db
+    
+    # Comando para rodar com auto-reload (ótimo para desenvolvimento)
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    
+    # Sincroniza seus arquivos locais com o container em tempo real
+    # Se você editar um arquivo .py, o Uvicorn reinicia sozinho
+    volumes:
+      - .:/app
+
+  # --- 2. O SERVIÇO DO BANCO DE DADOS ---
+  db:
+    # Usa uma imagem oficial do PostgreSQL
+    image: postgres:15
+    container_name: gameconnect_db
+    environment:
+      # Estas credenciais DEvem ser as mesmas da DATABASE_URL acima
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: gameconnect
+    ports:
+      # Mapeia a porta 5432 da sua máquina para a 5432 do container
+      # (Permite que você acesse o DB com o DBeaver/pgAdmin)
+      - "5432:5432"
+    volumes:
+      # Garante que os dados do banco não se percam
+      - postgres_data:/var/lib/postgresql/data
+
+# Volume de dados persistente
+volumes:
+  postgres_data:
