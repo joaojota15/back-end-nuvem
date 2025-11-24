@@ -16,17 +16,29 @@ def get_db():
     finally:
         db.close()
 
-@router.post('/register', response_model=UserOut, status_code=status.HTTP_201_CREATED)
+@router.post('/register', response_model=Token, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == user_in.email).first()
     if existing:
         raise HTTPException(status_code=400, detail='Email já cadastrado')
+
+    # nome do usuário
     name = getattr(user_in, 'name', None) or getattr(user_in, 'username', None) or user_in.email.split('@')[0]
-    user = User(name=name, email=user_in.email, password_hash=hash_password(user_in.password))
+
+    # cria usuário
+    user = User(
+        name=name,
+        email=user_in.email,
+        password_hash=hash_password(user_in.password)
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
-    return UserOut(id=str(user.id), username=user.name, email=user.email)
+
+    # 🔥 gera token automático após criar usuário
+    token = create_access_token(subject=str(user.id))
+
+    return Token(access_token=token)
 
 @router.post('/login', response_model=Token)
 def login(data: LoginIn, db: Session = Depends(get_db)):
