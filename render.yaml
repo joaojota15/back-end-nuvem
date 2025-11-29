@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: meu-backend
+    env: python
+    plan: free
+    pythonVersion: 3.11.6   # versão compatível com seu projeto
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
