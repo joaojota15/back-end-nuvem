@@ -6,8 +6,8 @@ passlib[bcrypt]==1.7.4
 python-jose==3.3.0
 sendgrid==6.12.5
 python-dotenv==1.0.1
-pydantic[email]==1.10.12
-# pydantic-settings removido
+pydantic[email]==2.6.0
+pydantic-settings==2.1.0
 httpx==0.24.1
 pytest==8.4.2
 bcrypt==4.1.2
