@@ -7,7 +7,7 @@ python-jose==3.3.0
 sendgrid==6.12.5
 python-dotenv==1.0.1
 pydantic[email]==1.10.12
-pydantic-settings==1.1.1
+# pydantic-settings removido
 httpx==0.24.1
 pytest==8.4.2
 bcrypt==4.1.2
