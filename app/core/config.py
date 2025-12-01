@@ -21,6 +21,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = True
 
+<<<<<<< HEAD
 settings = Settings()from pydantic_settings import BaseSettings
 from pydantic import EmailStr
 
@@ -50,3 +51,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+=======
+settings = Settings()
+>>>>>>> e5b4ec757330ba6b79850b145dd2efb94bc877a9
